@@ -1,1 +1,1 @@
-# DIY-mini-blog
+# mini-project
