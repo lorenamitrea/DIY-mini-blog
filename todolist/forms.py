@@ -3,4 +3,4 @@ from django.core.exceptions import ValidationError
 
 
 class NewBoard(forms.Form):
-    pass
+    board_name = forms.CharField(max_length=500, label='List Name')
