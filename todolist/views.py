@@ -25,20 +25,34 @@ def add_board(request):
 
 
 @login_required
+def add_task(request):
+    if request.user.is_authenticated:
+        username = request.user.id
+
+        if request.method == 'POST':
+            if 'task' in str(request.POST):
+                task_form = NewTask(request.POST, prefix='task')
+                if task_form.is_valid():
+                    user = request.user
+                    task = Task(name=task_form.cleaned_data['name'], status=False, board=task_form.cleaned_data['board'])
+                    task.save()
+                    return HttpResponseRedirect(reverse('todo'))
+    return HttpResponseNotFound
+
+
+@login_required
 def todo(request):
 
     todo_dict = {}
     username = None
     board_form = None
-    task_form_set = None
+    task_form = None
     if request.user.is_authenticated:
         username = request.user.id
         boards = Board.objects.filter(username_id=username)
         tasks = Task.objects.filter(board_id__in=boards)
-        no_boards = Board.objects.filter(username_id=username).count()
-        TaskFormSet = formset_factory(NewTask, extra=no_boards)
         board_form = NewBoard(prefix='board')
-        task_form_set = TaskFormSet(prefix='task')
+        task_form = NewTask(prefix='task')
         for board in boards:
             todo_dict[board.name] = []
         for task in tasks:
@@ -47,7 +61,6 @@ def todo(request):
     context = {
         'todo_dict': todo_dict,
         'board_form': board_form,
-        'task_form_set': task_form_set
+        'task_form': task_form
     }
-    print(context)
     return render(request, 'todo.html', context=context)

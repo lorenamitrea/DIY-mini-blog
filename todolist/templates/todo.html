@@ -5,18 +5,17 @@
         {{ board_form }}&nbsp;
         <button type="submit" class="btn btn-outline-secondary">Add List</button>
     </form>
+    <form class="form-inline" action="{% url 'add_task' %}" method="post">
+    {% csrf_token %}
+        {{ task_form }}&nbsp;
+        <button class="btn btn-outline-secondary" type="submit">Add Task</button>
+    </form>
     <br>
     <div>
         {% for key, value in todo_dict.items %}
             <ul class="list-group">
                 <li class="list-group-item list-group-item-dark">{{ key }}</li>
-                <li class="list-group-item">
-                    <form class="form-inline" action="" method="post">
-                    {% csrf_token %}
-                        {{ task_form_set.0 }}&nbsp;
-                        <button class="btn btn-outline-secondary" type="submit" id="button-addon1">+</button>
-                    </form>
-                </li>
+
                 {% for task in value %}
                     <li class="list-group-item">
                         <div class="custom-control custom-checkbox">
