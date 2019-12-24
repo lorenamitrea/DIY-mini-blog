@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from todolist.models import Board, Task
 from django.contrib.auth.decorators import login_required
 from .forms import NewBoard, NewTask
@@ -31,13 +31,25 @@ def add_task(request):
 
         if request.method == 'POST':
             if 'task' in str(request.POST):
-                task_form = NewTask(request.POST, prefix='task')
+                task_form = NewTask(request.POST, user=request.user, prefix='task')
                 if task_form.is_valid():
                     user = request.user
                     task = Task(name=task_form.cleaned_data['name'], status=False, board=task_form.cleaned_data['board'])
                     task.save()
                     return HttpResponseRedirect(reverse('todo'))
     return HttpResponseNotFound
+
+
+@login_required
+def check(request, pk):
+    if request.user.is_authenticated:
+        username = request.user.id
+        if request.method == 'POST':
+            task_instance = get_object_or_404(Task, pk=pk)
+            task_instance.status = False if task_instance.status else True
+            task_instance.save()
+            return HttpResponseRedirect(reverse('todo'))
+    return HttpResponseNotFound()
 
 
 @login_required
@@ -52,7 +64,7 @@ def todo(request):
         boards = Board.objects.filter(username_id=username)
         tasks = Task.objects.filter(board_id__in=boards)
         board_form = NewBoard(prefix='board')
-        task_form = NewTask(prefix='task')
+        task_form = NewTask(prefix='task', user=request.user)
         for board in boards:
             todo_dict[board.name] = []
         for task in tasks:
