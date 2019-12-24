@@ -31,6 +31,7 @@ def add_task(request):
 
         if request.method == 'POST':
             if 'task' in str(request.POST):
+                print("am ajuns aici")
                 task_form = NewTask(request.POST, user=request.user, prefix='task')
                 if task_form.is_valid():
                     user = request.user
