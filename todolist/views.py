@@ -31,7 +31,6 @@ def add_task(request):
 
         if request.method == 'POST':
             if 'task' in str(request.POST):
-                print("am ajuns aici")
                 task_form = NewTask(request.POST, user=request.user, prefix='task')
                 if task_form.is_valid():
                     user = request.user
@@ -54,6 +53,17 @@ def check(request, pk):
 
 
 @login_required
+def delete_board(request, pk):
+    if request.user.is_authenticated:
+        username = request.user.id
+        if request.method == 'POST':
+            board_instance = get_object_or_404(Board, pk=pk)
+            board_instance.delete()
+            return HttpResponseRedirect(reverse('todo'))
+    return HttpResponseNotFound()
+
+
+@login_required
 def todo(request):
 
     todo_dict = {}
@@ -67,13 +77,14 @@ def todo(request):
         board_form = NewBoard(prefix='board')
         task_form = NewTask(prefix='task', user=request.user)
         for board in boards:
-            todo_dict[board.name] = []
+            todo_dict[board] = []
         for task in tasks:
             task_dict = {'id': task.id, 'action': task.name, 'done': task.status, 'details': task.details}
-            todo_dict[task.board.name].append(task_dict)
+            todo_dict[task.board].append(task_dict)
     context = {
         'todo_dict': todo_dict,
         'board_form': board_form,
         'task_form': task_form
     }
     return render(request, 'todo.html', context=context)
+

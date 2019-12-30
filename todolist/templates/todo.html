@@ -13,8 +13,16 @@
     <br>
     <div>
         {% for key, value in todo_dict.items %}
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-dark">{{ key }}</li>
+            <ul class="list-group" >
+                <li class="list-group-item list-group-item-dark">
+                    <form class="form-inline" action="{% url 'delete_board' pk=key.id %}" method="post">
+                        {% csrf_token %}
+                        {{ key.name }}
+                        <button type="submit" class="close" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </form>
+                </li>
 
                 {% for task in value %}
                     <li class="list-group-item">

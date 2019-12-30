@@ -5,5 +5,6 @@ urlpatterns = [
     path('', views.todo, name='todo'),
     path('add_board/', views.add_board, name='add_board'),
     path('add_task/', views.add_task, name='add_task'),
-    path('check/<int:pk>/', views.check, name='check')
+    path('check/<int:pk>/', views.check, name='check'),
+    path('delete_board/<int:pk>/', views.delete_board, name='delete_board')
 ]
