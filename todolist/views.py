@@ -25,16 +25,16 @@ def add_board(request):
 
 
 @login_required
-def add_task(request):
+def add_task(request, pk):
     if request.user.is_authenticated:
         username = request.user.id
-
-        if request.method == 'POST':
-            if 'task' in str(request.POST):
-                task_form = NewTask(request.POST, user=request.user, prefix='task')
+        if 'task' in str(request.POST):
+            if request.method == 'POST':
+                print(request.POST)
+                task_form = NewTask(request.POST, prefix='task')
                 if task_form.is_valid():
-                    user = request.user
-                    task = Task(name=task_form.cleaned_data['name'], status=False, board=task_form.cleaned_data['board'])
+                    board_obj = get_object_or_404(Board, pk=pk)
+                    task = Task(name=task_form.cleaned_data['task_name'], status=False, board=board_obj)
                     task.save()
                     return HttpResponseRedirect(reverse('todo'))
     return HttpResponseNotFound
@@ -75,7 +75,8 @@ def todo(request):
         boards = Board.objects.filter(username_id=username)
         tasks = Task.objects.filter(board_id__in=boards)
         board_form = NewBoard(prefix='board')
-        task_form = NewTask(prefix='task', user=request.user)
+        #task_form = NewTask(prefix='task', user=request.user)
+        task_form = NewTask(prefix='task')
         for board in boards:
             todo_dict[board] = []
         for task in tasks:

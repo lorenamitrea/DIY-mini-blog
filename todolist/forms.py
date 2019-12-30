@@ -8,7 +8,7 @@ class NewBoard(forms.Form):
     board_name = forms.CharField(max_length=500, label='List Name')
 
 
-class NewTask(forms.ModelForm):
+"""class NewTask(forms.ModelForm):
 
     class Meta:
         model = Task
@@ -20,3 +20,8 @@ class NewTask(forms.ModelForm):
         super(NewTask, self).__init__(*args, **kwargs)
         self.fields['board'] = forms.ModelChoiceField(queryset=Board.objects.filter(username=user))
         #self.labels['board'] = _('List Name')
+"""
+
+
+class NewTask(forms.Form):
+    task_name = forms.CharField(max_length=1000, label='')

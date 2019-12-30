@@ -5,15 +5,15 @@
         {{ board_form }}&nbsp;
         <button type="submit" class="btn btn-outline-secondary">Add List</button>
     </form>
-    <form class="form-inline" action="{% url 'add_task' %}" method="post">
-    {% csrf_token %}
-        {{ task_form }}&nbsp;
-        <button class="btn btn-outline-secondary" type="submit">Add Task</button>
-    </form>
+    {#<form class="form-inline" action="{% url 'add_task' %}" method="post"> #}
+    {#  {% csrf_token %} #}
+    {#  {{ task_form }}&nbsp; #}
+    {#   <button class="btn btn-outline-secondary" type="submit">Add Task</button> #}
+    {# </form> #}
     <br>
     <div>
         {% for key, value in todo_dict.items %}
-            <ul class="list-group" >
+            <ul class="list-group">
                 <li class="list-group-item list-group-item-dark">
                     <form class="form-inline" action="{% url 'delete_board' pk=key.id %}" method="post">
                         {% csrf_token %}
@@ -23,10 +23,17 @@
                         </button>
                     </form>
                 </li>
-
+                <li class="list-group-item">
+                    <form class="form-inline" action="{% url 'add_task' pk=key.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="input-group-text" type="submit" id="add_sign">+</button>
+                        {{ task_form }}
+                    </form>
+                </li>
                 {% for task in value %}
                     <li class="list-group-item">
                         <div class="custom-control custom-checkbox">
+
                             <form class="form-inline" action="{% url 'check' pk=task.id %}" method="post">
                                 {% csrf_token %}
                                 <input type="submit" class="custom-control-input" id="{{ task.id }}">
@@ -36,7 +43,6 @@
                         </div>
                     </li>
                 {% endfor %}
-
             </ul>
         {% endfor %}
     </div>
