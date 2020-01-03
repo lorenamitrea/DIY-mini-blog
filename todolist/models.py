@@ -22,3 +22,10 @@ class Task(models.Model):
     def __str__(self):
         return f'{self.name}-{self.board}'
 
+
+class Friend(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    friend = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="friends", null=True)
+
+    def __str__(self):
+        return f'{self.user.username} is friend with {self.friend.username}.'

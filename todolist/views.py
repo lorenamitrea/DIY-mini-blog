@@ -1,24 +1,19 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
-
-from todolist.models import Board, Task
+from todolist.models import Board, Task, Friend
 from django.contrib.auth.decorators import login_required
 from .forms import NewBoard, NewTask
-from django.forms import formset_factory
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
-from collections import deque
 from django.contrib.auth.models import User
-from django.db.models import Q
 
 
 @login_required
 def add_board(request):
     if request.user.is_authenticated:
         username = request.user.id
-        boards = Board.objects.filter(username_id=username)
         if request.method == 'POST':
             if 'board' in str(request.POST):
                 board_form = NewBoard(request.POST, prefix='board')
@@ -33,7 +28,6 @@ def add_board(request):
 @login_required
 def add_task(request, pk):
     if request.user.is_authenticated:
-        username = request.user.id
         if 'task' in str(request.POST):
             if request.method == 'POST':
                 task_form = NewTask(request.POST, prefix='task')
@@ -48,7 +42,6 @@ def add_task(request, pk):
 @login_required
 def check(request, pk):
     if request.user.is_authenticated:
-        username = request.user.id
         if request.method == 'POST':
             task_instance = get_object_or_404(Task, pk=pk)
             task_instance.status = False if task_instance.status else True
@@ -60,7 +53,6 @@ def check(request, pk):
 @login_required
 def delete_board(request, pk):
     if request.user.is_authenticated:
-        username = request.user.id
         if request.method == 'POST':
             board_instance = get_object_or_404(Board, pk=pk)
             board_instance.delete()
@@ -86,8 +78,6 @@ def signup(request):
 @login_required(login_url='/accounts/login/')
 def todo(request):
     todo_dict = {}
-    todo_dict_done = {}
-    username = None
     board_form = None
     task_form = None
     index_position = 0
@@ -123,3 +113,20 @@ class SearchResultsView(ListView):
         query = self.request.GET.get('searched_item')
         object_list = User.objects.filter(username__icontains=query)
         return object_list
+
+
+@login_required
+def change_friendship(request, pk):
+    if request.user.is_authenticated:
+        user_id = request.user.id
+        if request.method == 'POST':
+            user_instance = get_object_or_404(User, pk=user_id)
+            friend_instance = get_object_or_404(User, pk=pk)
+            friendship_instance, created = Friend.objects.get_or_create(user=user_instance, friend=friend_instance)
+            if created:
+                friendship_instance.save()
+            else:
+                friendship_instance.delete()
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseNotFound()
+
