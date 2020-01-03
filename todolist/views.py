@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
-
+from collections import deque
 
 @login_required
 def add_board(request):
@@ -32,7 +32,6 @@ def add_task(request, pk):
         username = request.user.id
         if 'task' in str(request.POST):
             if request.method == 'POST':
-                print(request.POST)
                 task_form = NewTask(request.POST, prefix='task')
                 if task_form.is_valid():
                     board_obj = get_object_or_404(Board, pk=pk)
@@ -84,9 +83,11 @@ def signup(request):
 def todo(request):
 
     todo_dict = {}
+    todo_dict_done = {}
     username = None
     board_form = None
     task_form = None
+    index_position = 0
     if request.user.is_authenticated:
         username = request.user.id
         boards = Board.objects.filter(username_id=username)
@@ -97,7 +98,12 @@ def todo(request):
             todo_dict[board] = []
         for task in tasks:
             task_dict = {'id': task.id, 'action': task.name, 'done': task.status, 'details': task.details}
-            todo_dict[task.board].append(task_dict)
+            if task_dict['done']:
+                todo_dict[task.board].append(task_dict)
+            else:
+                todo_dict[task.board].insert(index_position, task_dict)
+                index_position += 1
+
     context = {
         'todo_dict': todo_dict,
         'board_form': board_form,
