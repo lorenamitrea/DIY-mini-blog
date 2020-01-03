@@ -17,6 +17,10 @@
                 <a class="nav-link" href="{% url 'todo' %}">To Do List</a>
             </li>
             {% if user.is_authenticated %}
+                <form class="form-inline my-2 my-lg-0" action="{% url 'search' %}" method="get">
+                    <input name="searched_item" class="form-control mr-sm-2" type="search" placeholder="Search User" aria-label="Search">
+                    <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+                </form>
                 <li class="nav-item"><a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
                     {{ user.get_username }}
                 </a></li>
@@ -25,7 +29,9 @@
                 <li><a class="nav-link" href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
 
             {% endif %}
+
         </ul>
+
     {% endblock %}
 </div>
 <div class="center">

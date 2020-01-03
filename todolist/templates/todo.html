@@ -2,7 +2,7 @@
 {% block content %}
     <form class="form-inline" action="{% url 'add_board' %}" method="post">
         {% csrf_token %}
-        {{ board_form }}&nbsp;
+        {{ board_form }}
         <button type="submit" class="btn btn-outline-secondary">Add List</button>
     </form>
     {#<form class="form-inline" action="{% url 'add_task' %}" method="post"> #}

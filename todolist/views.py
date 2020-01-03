@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView
+
 from todolist.models import Board, Task
 from django.contrib.auth.decorators import login_required
 from .forms import NewBoard, NewTask
@@ -8,10 +10,12 @@ from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from collections import deque
+from django.contrib.auth.models import User
+from django.db.models import Q
+
 
 @login_required
 def add_board(request):
-
     if request.user.is_authenticated:
         username = request.user.id
         boards = Board.objects.filter(username_id=username)
@@ -81,7 +85,6 @@ def signup(request):
 
 @login_required(login_url='/accounts/login/')
 def todo(request):
-
     todo_dict = {}
     todo_dict_done = {}
     username = None
@@ -111,3 +114,12 @@ def todo(request):
     }
     return render(request, 'todo.html', context=context)
 
+
+class SearchResultsView(ListView):
+    model = User
+    template_name = 'search_results.html'
+
+    def get_queryset(self):
+        query = self.request.GET.get('searched_item')
+        object_list = User.objects.filter(username__icontains=query)
+        return object_list

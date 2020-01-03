@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class NewBoard(forms.Form):
-    board_name = forms.CharField(max_length=500, label='List Name')
+    board_name = forms.CharField(max_length=500, label='List Name', widget=forms.TextInput(attrs={'class': 'form-control mr-sm-2'}))
 
 
 """class NewTask(forms.ModelForm):
@@ -24,4 +24,4 @@ class NewBoard(forms.Form):
 
 
 class NewTask(forms.Form):
-    task_name = forms.CharField(max_length=1000, label='')
+    task_name = forms.CharField(max_length=1000, label='', widget=forms.TextInput(attrs={'class': 'form-control mr-sm-2'}))
