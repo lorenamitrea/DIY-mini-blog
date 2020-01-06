@@ -130,3 +130,4 @@ def change_friendship(request, pk):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     return HttpResponseNotFound()
 
+
