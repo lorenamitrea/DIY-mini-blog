@@ -1,0 +1,25 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    {% load friendship_tags %}
+    <h1>Search results</h1>
+    {% if object_list %}
+        <ul class="list-group list-group-flush">
+            {% for object_instance in object_list %}
+                <li class="list-group-item">
+
+                    <form class="form-inline" method="post" action="{% url 'change_friendship' pk=object_instance.id %}">
+                        {% csrf_token %}
+                        {{ object_instance.username }}&nbsp;
+                        {% is_friend user object_instance as check_friendship %}
+                        {% if check_friendship %}
+                            <button class="input-group-text" type="submit" name="next" id="remove_friend">Following</button>
+                        {% else %}
+                            <button class="input-group-text" type="submit" name="next" id="add_friend">Follow</button>
+                        {% endif %}
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
