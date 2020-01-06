@@ -38,8 +38,15 @@
                                 {% csrf_token %}
                                 <input type="submit" class="custom-control-input" id="{{ task.id }}">
                             </form>
-                            <label class="custom-control-label" for="{{ task.id }}"
+
+                            <form action="{% url 'delete_task' pk=task.id %}" method="post">
+                                {% csrf_token %}
+                                <label class="custom-control-label" for="{{ task.id }}"
                                    style="{% if task.done %}text-decoration: line-through;{% endif %}">{{ task.action }}</label>
+                                <button type="submit" class="close" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </form>
                         </div>
                     </li>
                 {% endfor %}
