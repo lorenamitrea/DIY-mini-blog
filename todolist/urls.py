@@ -10,5 +10,6 @@ urlpatterns = [
     path('delete_board/<int:pk>/', views.delete_board, name='delete_board'),
     path('accounts/signup/', views.signup, name='signup'),
     path('search/', views.SearchResultsView.as_view(), name='search'),
-    path('change_friendship/<int:pk>', views.change_friendship, name='change_friendship')
+    path('change_friendship/<int:pk>/', views.change_friendship, name='change_friendship'),
+    path('<str:username>/', views.view_profile, name='profile')
 ]
