@@ -12,3 +12,15 @@
 .topbar {
     margin-top: 5px;
 }
+
+.dropdown-item{
+  white-space : nowrap;
+}
+.dropdown-item .text {
+  word-wrap:break-word;
+}
+.dropdown-menu.show{
+  min-width:100%!important;
+  width:100%!important;
+
+}

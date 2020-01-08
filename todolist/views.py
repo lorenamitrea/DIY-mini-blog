@@ -75,7 +75,7 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            return HttpResponseRedirect(reverse('todo'))
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
@@ -90,6 +90,9 @@ def todo(request):
     tasks = Task.objects.filter(board_id__in=boards)
     board_form = NewBoard(prefix='board')
     task_form = NewTask(prefix='task')
+    users_friends = Friend.objects.filter(user_id=username)
+    for entry in users_friends:
+        print(entry.friend.username)
     for board in boards:
         if board.members.count() == 1:
             todo_dict[board] = []
@@ -105,7 +108,8 @@ def todo(request):
     context = {
         'todo_dict': todo_dict,
         'board_form': board_form,
-        'task_form': task_form
+        'task_form': task_form,
+        'friends': users_friends,
     }
     return render(request, 'todo.html', context=context)
 
@@ -115,8 +119,10 @@ class SearchResultsView(ListView):
     template_name = 'search_results.html'
 
     def get_queryset(self):
-        query = self.request.GET.get('searched_item')
-        object_list = User.objects.filter(username__icontains=query)
+        object_list = []
+        if 'searched_item' in self.request.GET:
+            query = self.request.GET.get('searched_item')
+            object_list = User.objects.filter(username__icontains=query)
         return object_list
 
 
@@ -164,3 +170,14 @@ def view_profile(request, username):
         'task_form': task_form
     }
     return render(request, 'profile.html', context=context)
+
+
+@login_required
+def share_board(request, board_id, friend_id):
+    if request.method == 'GET':
+        user = request.user
+        board_obj = get_object_or_404(Board, pk=pk)
+        task = Task(name=task_form.cleaned_data['task_name'], status=False, board=board_obj)
+        task.save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseNotFound
