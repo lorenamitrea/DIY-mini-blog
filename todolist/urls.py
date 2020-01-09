@@ -13,6 +13,6 @@ urlpatterns = [
     path('accounts/signup/', views.signup, name='signup'),
     path('search/', login_required(views.SearchResultsView.as_view()), name='search'),
     path('change_friendship/<int:pk>/', views.change_friendship, name='change_friendship'),
+    path('share_board/', views.share_board, name='share_board'),
     path('<str:username>/', views.view_profile, name='profile'),
-    path('share_board/<int:pk>', views.share_board, name='share_board')
 ]

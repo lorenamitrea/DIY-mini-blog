@@ -173,11 +173,10 @@ def view_profile(request, username):
 
 
 @login_required
-def share_board(request, board_id, friend_id):
-    if request.method == 'GET':
+def share_board(request):
+    if request.method == 'POST':
         user = request.user
-        board_obj = get_object_or_404(Board, pk=pk)
-        task = Task(name=task_form.cleaned_data['task_name'], status=False, board=board_obj)
-        task.save()
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        print(request.POST)
+        return redirect('todo')
     return HttpResponseNotFound
+
