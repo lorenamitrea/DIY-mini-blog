@@ -85,12 +85,8 @@
                             <input readonly="readonly" id="boardID" type="hidden" name="board_id"/>
                         </div>
                         {% csrf_token %}
-                        <label class="my-1 mr-2" for="inlineFormSelectPref">Share board with</label>
-                        <select class="custom-select my-1 mr-sm-2" id="inlineFormSelectPref">
-                            {% for friend in friends %}
-                                <option>{{ friend.friend.username }}</option>
-                            {% endfor %}
-                        </select>
+                        {{ friends_form }}
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
