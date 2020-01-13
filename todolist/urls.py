@@ -16,3 +16,4 @@ urlpatterns = [
     path('share_board/', views.share_board, name='share_board'),
     path('<str:username>/', views.view_profile, name='profile'),
 ]
+
