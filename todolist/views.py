@@ -178,8 +178,8 @@ def share_board(request):
         share_board_form = BoardShare(request.POST, current_user=username)
         if share_board_form.is_valid():
             board_instace = get_object_or_404(Board, pk=board_id)
-            friend_username = share_board_form.cleaned_data['friend_choice'].split('->')[1]
-            friend_instance = get_object_or_404(User, username=friend_username)
+            friend_id = share_board_form.cleaned_data['friend_choice']
+            friend_instance = get_object_or_404(User, pk=friend_id)
             board_instace.members.add(friend_instance)
             return redirect('todo')
     return HttpResponseNotFound
