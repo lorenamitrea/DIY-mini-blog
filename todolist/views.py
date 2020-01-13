@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 @login_required
@@ -17,9 +18,10 @@ def add_board(request):
             board_form = NewBoard(request.POST, prefix='board')
             if board_form.is_valid():
                 user = request.user
-                board = Board(name=board_form.cleaned_data['board_name'], username=user)
+                board = Board(name=board_form.cleaned_data['board_name'], user=user)
                 board.save()
-                return HttpResponseRedirect(reverse('todo'))
+                board.members.add(user)
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     return HttpResponseNotFound
 
 
@@ -32,7 +34,7 @@ def add_task(request, pk):
                 board_obj = get_object_or_404(Board, pk=pk)
                 task = Task(name=task_form.cleaned_data['task_name'], status=False, board=board_obj)
                 task.save()
-                return HttpResponseRedirect(reverse('todo'))
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     return HttpResponseNotFound
 
 
@@ -42,7 +44,7 @@ def check_task(request, pk):
         task_instance = get_object_or_404(Task, pk=pk)
         task_instance.status = False if task_instance.status else True
         task_instance.save()
-        return HttpResponseRedirect(reverse('todo'))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     return HttpResponseNotFound()
 
 
@@ -51,7 +53,7 @@ def delete_task(request, pk):
     if request.method == 'POST':
         task_instance = get_object_or_404(Task, pk=pk)
         task_instance.delete()
-        return HttpResponseRedirect(reverse('todo'))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     return HttpResponseNotFound()
 
 
@@ -60,7 +62,7 @@ def delete_board(request, pk):
     if request.method == 'POST':
         board_instance = get_object_or_404(Board, pk=pk)
         board_instance.delete()
-        return HttpResponseRedirect(reverse('todo'))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     return HttpResponseNotFound()
 
 
@@ -73,7 +75,7 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('todo')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
@@ -84,19 +86,21 @@ def todo(request):
     todo_dict = {}
     index_position = 0
     username = request.user.id
-    boards = Board.objects.filter(username_id=username)
+    boards = Board.objects.filter(user_id=username)
     tasks = Task.objects.filter(board_id__in=boards)
     board_form = NewBoard(prefix='board')
     task_form = NewTask(prefix='task')
     for board in boards:
-        todo_dict[board] = []
+        if board.members.count() == 1:
+            todo_dict[board] = []
     for task in tasks:
-        task_dict = {'id': task.id, 'action': task.name, 'done': task.status, 'details': task.details}
-        if task_dict['done']:
-            todo_dict[task.board].append(task_dict)
-        else:
-            todo_dict[task.board].insert(index_position, task_dict)
-            index_position += 1
+        if task.board in todo_dict.keys():
+            task_dict = {'id': task.id, 'action': task.name, 'done': task.status, 'details': task.details}
+            if task_dict['done']:
+                todo_dict[task.board].append(task_dict)
+            else:
+                todo_dict[task.board].insert(index_position, task_dict)
+                index_position += 1
 
     context = {
         'todo_dict': todo_dict,
@@ -133,3 +137,32 @@ def change_friendship(request, pk):
     return HttpResponseNotFound()
 
 
+@login_required
+def view_profile(request, username):
+    todo_dict = {}
+    index_position = 0
+    user = request.user
+    member = get_object_or_404(User, username=username)
+    boards = Board.objects.all()
+    tasks = Task.objects.filter(board_id__in=boards)
+    task_form = NewTask(prefix='task')
+    for board in boards:
+        members_list = []
+        if board.members.count() >= 2:
+            for members in board.members.all():
+                members_list.append(members)
+            if user in members_list and member in members_list:
+                todo_dict[board] = []
+    for task in tasks:
+        if task.board in todo_dict.keys():
+            task_dict = {'id': task.id, 'action': task.name, 'done': task.status, 'details': task.details}
+            if task_dict['done']:
+                todo_dict[task.board].append(task_dict)
+            else:
+                todo_dict[task.board].insert(index_position, task_dict)
+            index_position += 1
+    context = {
+        'todo_dict': todo_dict,
+        'task_form': task_form
+    }
+    return render(request, 'profile.html', context=context)

@@ -10,7 +10,7 @@
 
                     <form class="form-inline" method="post" action="{% url 'change_friendship' pk=object_instance.id %}">
                         {% csrf_token %}
-                        {{ object_instance.username }}&nbsp;
+                        <a href="{% url 'profile' username=object_instance.username %}"> {{ object_instance.username }}&nbsp;</a>
                         {% is_friend user object_instance as check_friendship %}
                         {% if check_friendship %}
                             <button class="input-group-text" type="submit" name="next" id="remove_friend">Following</button>
