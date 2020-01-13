@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from todolist.models import Board, Task, Friend
 from django.contrib.auth.decorators import login_required
-from .forms import NewBoard, NewTask
+from .forms import NewBoard, NewTask, BoardShare
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm
@@ -75,7 +75,7 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            return HttpResponseRedirect(reverse('todo'))
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
@@ -88,6 +88,7 @@ def todo(request):
     username = request.user.id
     boards = Board.objects.filter(user_id=username)
     tasks = Task.objects.filter(board_id__in=boards)
+    friends_form = BoardShare(current_user=username)
     board_form = NewBoard(prefix='board')
     task_form = NewTask(prefix='task')
     for board in boards:
@@ -105,7 +106,8 @@ def todo(request):
     context = {
         'todo_dict': todo_dict,
         'board_form': board_form,
-        'task_form': task_form
+        'task_form': task_form,
+        'friends_form': friends_form,
     }
     return render(request, 'todo.html', context=context)
 
@@ -166,3 +168,19 @@ def view_profile(request, username):
         'task_form': task_form
     }
     return render(request, 'profile.html', context=context)
+
+
+@login_required
+def share_board(request):
+    if request.method == 'POST':
+        username = request.user.id
+        board_id = request.POST.get('board_id')
+        share_board_form = BoardShare(request.POST, current_user=username)
+        if share_board_form.is_valid():
+            board_instace = get_object_or_404(Board, pk=board_id)
+            friend_username = share_board_form.cleaned_data['friend_choice'].split('->')[1]
+            friend_instance = get_object_or_404(User, username=friend_username)
+            board_instace.members.add(friend_instance)
+            return redirect('todo')
+    return HttpResponseNotFound
+
