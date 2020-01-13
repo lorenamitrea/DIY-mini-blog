@@ -2,13 +2,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from todolist.models import Board, Task, Friend
 from django.contrib.auth.decorators import login_required
-from .forms import NewBoard, NewTask, BoardShare
+from .forms import NewBoard, NewTask, BoardShare, UserCreationFormExtended
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from django.db.models import Q
 
 
 @login_required
@@ -68,16 +66,17 @@ def delete_board(request, pk):
 
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = UserCreationFormExtended(request.POST)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             return HttpResponseRedirect(reverse('todo'))
     else:
-        form = UserCreationForm()
+        form = UserCreationFormExtended()
     return render(request, 'signup.html', {'form': form})
 
 

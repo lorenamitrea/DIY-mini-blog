@@ -1,5 +1,7 @@
 from django import forms
 from .models import Friend
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
 
 class NewBoard(forms.Form):
@@ -20,3 +22,18 @@ class BoardShare(forms.Form):
         users_friends = Friend.objects.filter(user_id=self.current_user)
         friends = [(entry.friend.id, entry.friend.username) for entry in users_friends]
         self.fields['friend_choice'] = forms.ChoiceField(choices=friends, label='Share with')
+
+
+class UserCreationFormExtended(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ("username", "email", "password1", "password2")
+
+    def save(self, commit=True):
+        user = super(UserCreationForm, self).save(commit=False)
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
