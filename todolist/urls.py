@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('', views.todo, name='todo'),
@@ -13,3 +14,4 @@ urlpatterns = [
     path('change_friendship/<int:pk>/', views.change_friendship, name='change_friendship'),
     path('<str:username>/', views.view_profile, name='profile')
 ]
+

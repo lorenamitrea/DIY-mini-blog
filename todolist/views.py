@@ -115,8 +115,10 @@ class SearchResultsView(ListView):
     template_name = 'search_results.html'
 
     def get_queryset(self):
-        query = self.request.GET.get('searched_item')
-        object_list = User.objects.filter(username__icontains=query)
+        object_list = []
+        if 'searched_item' in self.request.GET:
+            query = self.request.GET.get('searched_item')
+            object_list = User.objects.filter(username__icontains=query)
         return object_list
 
 

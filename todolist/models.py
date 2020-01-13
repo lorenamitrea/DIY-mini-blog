@@ -26,4 +26,4 @@ class Friend(models.Model):
     friend = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='friends', null=True)
 
     def __str__(self):
-        return f'{self.user.username} is friend with {self.friend.username}.'
+        return f'{self.user} is friend with {self.friend}.'
