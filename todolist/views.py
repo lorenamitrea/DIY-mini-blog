@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
-from todolist.models import Board, Task, Friend
+from todolist.models import Board, Task, Friend, Image, UserImages
 from django.contrib.auth.decorators import login_required
 from .forms import NewBoard, NewTask, BoardShare, UserCreationFormExtended
 from django.http import HttpResponseRedirect, HttpResponseNotFound
@@ -89,6 +89,10 @@ def todo(request):
     friends_form = BoardShare(current_user=username)
     board_form = NewBoard(prefix='board')
     task_form = NewTask(prefix='task')
+    background = None
+    background_obj = UserImages.objects.filter(user=username)
+    if len(background_obj) == 1:
+        background = background_obj[0].background
     for board in boards:
         if board.members.count() == 1:
             todo_dict[board] = []
@@ -100,12 +104,12 @@ def todo(request):
             else:
                 todo_dict[task.board].insert(index_position, task_dict)
                 index_position += 1
-
     context = {
         'todo_dict': todo_dict,
         'board_form': board_form,
         'task_form': task_form,
         'friends_form': friends_form,
+        'background': background
     }
     return render(request, 'todo.html', context=context)
 
