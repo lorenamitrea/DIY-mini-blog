@@ -3,24 +3,46 @@
     padding: 10px;
     width: fit-content;
 }
+
 .content {
     padding: 0;
     margin-left: 50px;
-    margin-right: 50px;
 }
 
 .topbar {
     margin-top: 5px;
 }
 
-.dropdown-item{
-  white-space : nowrap;
+.dropdown-item {
+    white-space: nowrap;
 }
+
 .dropdown-item .text {
-  word-wrap:break-word;
+    word-wrap: break-word;
 }
-.dropdown-menu.show{
-  min-width:100%!important;
-  width:100%!important;
+
+.dropdown-menu.show {
+    min-width: 100% !important;
+    width: 100% !important;
+
+}
+
+ul.list-group {
+    float: top;
+    margin-right: 4px;
+    margin-left: 2px;
+
+}
+
+div.wrapper_board{
+    display: inline-block;
+
+
+}
+
+div.custom_scrollable {
+
+    overflow: auto;
+    white-space: nowrap;
 
 }

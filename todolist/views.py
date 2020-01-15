@@ -150,6 +150,10 @@ def view_profile(request, username):
     boards = Board.objects.all()
     tasks = Task.objects.filter(board_id__in=boards)
     task_form = NewTask(prefix='task')
+    background = None
+    background_obj = UserImages.objects.filter(user=member)
+    if len(background_obj) == 1:
+        background = background_obj[0].background
     for board in boards:
         members_list = []
         if board.members.count() >= 2:
@@ -167,7 +171,8 @@ def view_profile(request, username):
             index_position += 1
     context = {
         'todo_dict': todo_dict,
-        'task_form': task_form
+        'task_form': task_form,
+        'background': background
     }
     return render(request, 'profile.html', context=context)
 
@@ -185,4 +190,9 @@ def share_board(request):
             board_instace.members.add(friend_instance)
             return redirect('todo')
     return HttpResponseNotFound
+
+
+@login_required
+def set_background(request):
+    pass
 

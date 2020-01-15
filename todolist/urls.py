@@ -14,6 +14,7 @@ urlpatterns = [
     path('search/', login_required(views.SearchResultsView.as_view()), name='search'),
     path('change_friendship/<int:pk>/', views.change_friendship, name='change_friendship'),
     path('share_board/', views.share_board, name='share_board'),
+    path('set_background/', views.set_background, name='set_background'),
     path('<str:username>/', views.view_profile, name='profile'),
 ]
 
