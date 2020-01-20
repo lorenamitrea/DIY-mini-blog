@@ -1,3 +1,4 @@
+
 .center {
     margin: auto;
     padding: 10px;
@@ -5,8 +6,8 @@
 }
 
 .content {
+    height: 100%;
     padding: 0;
-    margin-left: 50px;
 }
 
 .topbar {
@@ -29,12 +30,14 @@
 
 ul.list-group {
     float: top;
-    margin-right: 4px;
-    margin-left: 2px;
+    margin-right: 2px;
+    margin-left: 7px;
+    height: 100ch;
+
 
 }
 
-div.wrapper_board{
+div.wrapper_board {
     display: inline-block;
 
 
@@ -45,4 +48,17 @@ div.custom_scrollable {
     overflow: auto;
     white-space: nowrap;
 
+
+}
+
+.form-inline {
+    margin-left: 10px;
+}
+
+div.custom-form {
+    align-self: center;
+}
+
+img.card-img-top{
+    width: 30%;
 }

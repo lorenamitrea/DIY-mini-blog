@@ -1,39 +1,42 @@
 {% extends "base_generic.html" %}
 {% block content %}
-    <div>
+    <div class="custom_scrollable">
         {% for key, value in todo_dict.items %}
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-dark">
-                    {{ key.name }}
-                </li>
-                <li class="list-group-item">
-                    <form class="form-inline" action="{% url 'add_task' pk=key.id %}" method="post">
-                        {% csrf_token %}
-                        <button class="input-group-text" type="submit" id="add_sign">+</button>
-                        {{ task_form }}
-                    </form>
-                </li>
-                {% for task in value %}
-                    <li class="list-group-item">
-                        <div class="custom-control custom-checkbox">
+            <div class="wrapper_board">
 
-                            <form class="form-inline" action="{% url 'check' pk=task.id %}" method="post">
-                                {% csrf_token %}
-                                <input type="submit" class="custom-control-input" id="{{ task.id }}">
-                            </form>
-
-                            <form action="{% url 'delete_task' pk=task.id %}" method="post">
-                                {% csrf_token %}
-                                <label class="custom-control-label" for="{{ task.id }}"
-                                   style="{% if task.done %}text-decoration: line-through;{% endif %}">{{ task.action }}</label>
-                                <button type="submit" class="close" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </form>
-                        </div>
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-dark">
+                        {{ key.name }}
                     </li>
-                {% endfor %}
-            </ul>
+                    <li class="list-group-item">
+                        <form class="form-inline" action="{% url 'add_task' pk=key.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="input-group-text" type="submit" id="add_sign">+</button>
+                            {{ task_form }}
+                        </form>
+                    </li>
+                    {% for task in value %}
+                        <li class="list-group-item">
+                            <div class="custom-control custom-checkbox">
+
+                                <form class="form-inline" action="{% url 'check' pk=task.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="submit" class="custom-control-input" id="{{ task.id }}">
+                                </form>
+
+                                <form action="{% url 'delete_task' pk=task.id %}" method="post">
+                                    {% csrf_token %}
+                                    <label class="custom-control-label" for="{{ task.id }}"
+                                           style="{% if task.done %}text-decoration: line-through;{% endif %}">{{ task.action }}</label>
+                                    <button type="submit" class="close" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
         {% endfor %}
     </div>
 {% endblock %}

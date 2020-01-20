@@ -1,0 +1,20 @@
+{% extends 'base_generic.html' %}
+{% block content %}
+
+    <div>
+        <div class="card-group">
+            {% for image in images %}
+                <div class="card">
+                    <img class="card-img-top" src="{{ image.image.url }}" alt="{{ image.image.title }}">
+
+                </div>
+            {% endfor %}
+        </div>
+        <form class="form-inline custom-form" action="{% url 'set_background' %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="input-group-text" type="submit">+</button>
+        </form>
+    </div>
+
+{% endblock %}

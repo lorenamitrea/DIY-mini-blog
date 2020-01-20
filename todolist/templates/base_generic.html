@@ -13,14 +13,17 @@
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Dashboard</title>
+
     {% load static %}
+    <link rel="icon" href="{% static 'mim_cat.gif' %}" type="image/gif" sizes="16x16">
+
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
     {% block scripts %}
     {% endblock %}
 </head>
-<body style="background-image: url('{{ background.image.url }}');">
-
+<body style="background: url('{{ background.image.url }}') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
 <div class="topbar">
     {% block topbar %}
         <ul class="nav justify-content-end">

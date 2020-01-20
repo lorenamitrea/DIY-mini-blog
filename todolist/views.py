@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from todolist.models import Board, Task, Friend, Image, UserImages
 from django.contrib.auth.decorators import login_required
-from .forms import NewBoard, NewTask, BoardShare, UserCreationFormExtended
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+from .forms import NewBoard, NewTask, BoardShare, UserCreationFormExtended, NewImage
+from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.urls import reverse
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
@@ -194,5 +194,24 @@ def share_board(request):
 
 @login_required
 def set_background(request):
-    pass
+    user_id = request.user.id
+    image_list = []
+    image_form = NewImage()
+    if request.method == 'POST':
+        image_form = NewImage(request.POST, request.FILES)
+        if image_form.is_valid():
+            print(image_form.cleaned_data)
+
+    try:
+        user_images_qs = get_object_or_404(UserImages, user=user_id)
+    except Http404:
+        user_images_qs = None
+    if user_images_qs:
+        image_list = [entry for entry in user_images_qs.images.all()]
+
+    context = {
+        'images': image_list,
+        'form': image_form
+    }
+    return render(request, 'set_background_form.html', context=context)
 
