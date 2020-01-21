@@ -1,9 +1,10 @@
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
-from todolist.models import Board, Task, Friend
+from todolist.models import Board, Task, Friend, Image, UserImages
 from django.contrib.auth.decorators import login_required
-from .forms import NewBoard, NewTask, BoardShare, UserCreationFormExtended
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+from .forms import NewBoard, NewTask, BoardShare, UserCreationFormExtended, NewImage
+from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.urls import reverse
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
@@ -89,6 +90,10 @@ def todo(request):
     friends_form = BoardShare(current_user=username)
     board_form = NewBoard(prefix='board')
     task_form = NewTask(prefix='task')
+    background = None
+    background_obj = UserImages.objects.filter(user=username)
+    if len(background_obj) == 1:
+        background = background_obj[0].background
     for board in boards:
         if board.members.count() == 1:
             todo_dict[board] = []
@@ -100,12 +105,12 @@ def todo(request):
             else:
                 todo_dict[task.board].insert(index_position, task_dict)
                 index_position += 1
-
     context = {
         'todo_dict': todo_dict,
         'board_form': board_form,
         'task_form': task_form,
         'friends_form': friends_form,
+        'background': background
     }
     return render(request, 'todo.html', context=context)
 
@@ -146,6 +151,10 @@ def view_profile(request, username):
     boards = Board.objects.all()
     tasks = Task.objects.filter(board_id__in=boards)
     task_form = NewTask(prefix='task')
+    background = None
+    background_obj = UserImages.objects.filter(user=member)
+    if len(background_obj) == 1:
+        background = background_obj[0].background
     for board in boards:
         members_list = []
         if board.members.count() >= 2:
@@ -163,7 +172,8 @@ def view_profile(request, username):
             index_position += 1
     context = {
         'todo_dict': todo_dict,
-        'task_form': task_form
+        'task_form': task_form,
+        'background': background
     }
     return render(request, 'profile.html', context=context)
 
@@ -182,3 +192,44 @@ def share_board(request):
             return redirect('todo')
     return HttpResponseNotFound
 
+
+@login_required
+def set_background(request):
+    user_id = request.user.id
+    image_list = []
+
+    if request.method == 'POST':
+        image_form = NewImage(request.POST, request.FILES)
+        if image_form.is_valid():
+            image = Image(title=image_form.cleaned_data['title'], image=image_form.cleaned_data['image'])
+            image.save()
+            user_instance = get_object_or_404(User, pk=user_id)
+            user_images, created = UserImages.objects.get_or_create(user=user_instance,
+                                                                    defaults={'background': image})
+            user_images.images.add(image)
+            user_images.background = image
+            user_images.save()
+    else:
+        image_form = NewImage()
+    try:
+        user_images_qs = get_object_or_404(UserImages, user=user_id)
+    except Http404:
+        user_images_qs = None
+    if user_images_qs:
+        image_list = [entry for entry in user_images_qs.images.all()]
+
+    context = {
+        'images': image_list,
+        'form': image_form
+    }
+    return render(request, 'set_background_form.html', context=context)
+
+
+@login_required
+def select_background(request, pk):
+    user_id = request.user.id
+    user_images = get_object_or_404(UserImages, user=user_id)
+    image = get_object_or_404(Image, pk=pk)
+    user_images.background = image
+    user_images.save()
+    return redirect('todo')

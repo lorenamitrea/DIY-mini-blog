@@ -1,5 +1,5 @@
 from django import forms
-from .models import Friend
+from .models import Friend, Image
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
@@ -37,3 +37,12 @@ class UserCreationFormExtended(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class NewImage(forms.ModelForm):
+    class Meta:
+        model = Image
+        fields = ('title', 'image',)
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control mr-sm-2'}),
+        }

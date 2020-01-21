@@ -28,3 +28,19 @@ class Friend(models.Model):
     def __str__(self):
         return f'{self.user}->{self.friend}'
 
+
+class Image(models.Model):
+    title = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='images/')
+
+    def __str__(self):
+        return self.title
+
+
+class UserImages(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    images = models.ManyToManyField(Image, related_name='images')
+    background = models.ForeignKey(Image, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return f'{self.user.username}->{self.background.title}'

@@ -1,4 +1,5 @@
 {% extends "base_generic.html" %}
+
 {% block scripts %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -14,57 +15,66 @@
     <form class="form-inline" action="{% url 'add_board' %}" method="post">
         {% csrf_token %}
         {{ board_form }}
-        <button type="submit" class="btn btn-outline-secondary">Add List</button>
+        <button type="submit" class="btn btn-outline-dark">Add List</button>
+        <a href="{% url 'set_background' %}">
+            <button type="button" class="btn btn-outline-dark">Set Background</button>
+        </a>
     </form>
     <br>
-    <div>
+    <div class="custom_scrollable">
         {% for key, value in todo_dict.items %}
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-dark">
+            <div class="wrapper_board">
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-dark">
 
-                    <form action="{% url 'delete_board' pk=key.id %}" method="post">
-                        {% csrf_token %}
-                        {{ key.name }}
+                        <form action="{% url 'delete_board' pk=key.id %}" method="post">
+                            {% csrf_token %}
+                            {{ key.name }}
 
-                        <button type="submit" class="close" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                            <button type="submit" class="close" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </form>
+
+                        <button data-board-id="{{ key.id }}" type="button"
+                                class="btn btn-outline-light float-right share"
+                                data-toggle="modal"
+                                data-target="#shareModal">
+                            Share
                         </button>
-                    </form>
-
-                    <button data-board-id="{{ key.id }}" type="button" class="btn btn-outline-light float-right share" data-toggle="modal"
-                            data-target="#shareModal">
-                        Share
-                    </button>
-                </li>
-
-                <li class="list-group-item">
-                    <form class="form-inline" action="{% url 'add_task' pk=key.id %}" method="post">
-                        {% csrf_token %}
-                        <button class="input-group-text" type="submit" id="add_sign">+</button>
-                        {{ task_form }}
-                    </form>
-                </li>
-                {% for task in value %}
-                    <li class="list-group-item">
-                        <div class="custom-control custom-checkbox">
-
-                            <form class="form-inline" action="{% url 'check' pk=task.id %}" method="post">
-                                {% csrf_token %}
-                                <input type="submit" class="custom-control-input" id="{{ task.id }}">
-                            </form>
-
-                            <form action="{% url 'delete_task' pk=task.id %}" method="post">
-                                {% csrf_token %}
-                                <label class="custom-control-label" for="{{ task.id }}"
-                                       style="{% if task.done %}text-decoration: line-through;{% endif %}">{{ task.action }}</label>
-                                <button type="submit" class="close" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </form>
-                        </div>
                     </li>
-                {% endfor %}
-            </ul>
+
+                    <li class="list-group-item">
+                        <form class="form-inline" action="{% url 'add_task' pk=key.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="input-group-text" type="submit">+</button>
+                            {{ task_form }}
+                        </form>
+                    </li>
+                    {% for task in value %}
+                        <li class="list-group-item">
+                            <div class="custom-control custom-checkbox">
+
+                                <form class="form-inline" action="{% url 'check' pk=task.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="submit" class="custom-control-input" id="{{ task.id }}">
+                                </form>
+
+                                <form action="{% url 'delete_task' pk=task.id %}" method="post">
+                                    {% csrf_token %}
+                                    <label class="custom-control-label" for="{{ task.id }}"
+                                           style="{% if task.done %}text-decoration: line-through;{% endif %}">{{ task.action }}</label>
+                                    <button type="submit" class="close" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+
+                </ul>
+            </div>
+
         {% endfor %}
     </div>
     <div class="modal fade" id="shareModal" tabindex="-1" role="dialog"
@@ -97,5 +107,4 @@
             </div>
         </div>
     </div>
-
 {% endblock %}
