@@ -201,8 +201,6 @@ def set_background(request):
     if request.method == 'POST':
         image_form = NewImage(request.POST, request.FILES)
         if image_form.is_valid():
-            print(image_form.cleaned_data['image'])
-            print(image_form.cleaned_data['title'])
             image = Image(title=image_form.cleaned_data['title'], image=image_form.cleaned_data['image'])
             image.save()
             user_instance = get_object_or_404(User, pk=user_id)
@@ -213,8 +211,6 @@ def set_background(request):
             user_images.save()
     else:
         image_form = NewImage()
-
-
     try:
         user_images_qs = get_object_or_404(UserImages, user=user_id)
     except Http404:
