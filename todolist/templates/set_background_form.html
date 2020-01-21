@@ -4,7 +4,7 @@
     <div>
         <div class="card-group">
             {% for image in images %}
-                <ul>
+                <ul class="images-list">
                     <li>
                         <a href="{% url 'select_background' image.id %}">
                             <img class="custom-img" src="{{ image.image.url }}" alt="{{ image.image.title }}">

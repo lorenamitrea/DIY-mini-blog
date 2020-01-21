@@ -62,7 +62,11 @@ div.custom-form {
 img.custom-img{
     width: 20em;
 }
-ul{
+ul.images-list{
     list-style-type:none;
     text-align: center;
+}
+li.title-list{
+    text-align: center;
+
 }
