@@ -1,3 +1,4 @@
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from todolist.models import Board, Task, Friend, Image, UserImages
@@ -196,11 +197,23 @@ def share_board(request):
 def set_background(request):
     user_id = request.user.id
     image_list = []
-    image_form = NewImage()
+
     if request.method == 'POST':
         image_form = NewImage(request.POST, request.FILES)
         if image_form.is_valid():
-            print(image_form.cleaned_data)
+            print(image_form.cleaned_data['image'])
+            print(image_form.cleaned_data['title'])
+            image = Image(title=image_form.cleaned_data['title'], image=image_form.cleaned_data['image'])
+            image.save()
+            user_instance = get_object_or_404(User, pk=user_id)
+            user_images, created = UserImages.objects.get_or_create(user=user_instance,
+                                                                    defaults={'background': image})
+            user_images.images.add(image)
+            user_images.background = image
+            user_images.save()
+    else:
+        image_form = NewImage()
+
 
     try:
         user_images_qs = get_object_or_404(UserImages, user=user_id)
@@ -215,3 +228,12 @@ def set_background(request):
     }
     return render(request, 'set_background_form.html', context=context)
 
+
+@login_required
+def select_background(request, pk):
+    user_id = request.user.id
+    user_images = get_object_or_404(UserImages, user=user_id)
+    image = get_object_or_404(Image, pk=pk)
+    user_images.background = image
+    user_images.save()
+    return redirect('todo')

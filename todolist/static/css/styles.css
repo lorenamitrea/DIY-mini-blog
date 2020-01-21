@@ -59,6 +59,10 @@ div.custom-form {
     align-self: center;
 }
 
-img.card-img-top{
-    width: 30%;
+img.custom-img{
+    width: 20em;
+}
+ul{
+    list-style-type:none;
+    text-align: center;
 }
