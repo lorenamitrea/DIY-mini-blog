@@ -16,6 +16,7 @@ urlpatterns = [
     path('share_board/', views.share_board, name='share_board'),
     path('set_background/', views.set_background, name='set_background'),
     path('select_background/<int:pk>/', views.select_background, name='select_background'),
+    path('suggestions/', views.send_suggestions, name='send_suggestions'),
     path('<str:username>/', views.view_profile, name='profile'),
 ]
 
