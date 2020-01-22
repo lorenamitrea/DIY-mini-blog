@@ -59,14 +59,23 @@ div.custom-form {
     align-self: center;
 }
 
-img.custom-img{
+img.custom-img {
     width: 20em;
-}
-ul.images-list{
-    list-style-type:none;
-    text-align: center;
-}
-li.title-list{
-    text-align: center;
+    height: 20em;
+      object-fit: cover;
 
+}
+
+ul.images-list {
+    list-style-type: none;
+    text-align: center;
+}
+
+li.image-list {
+    float: left;
+    padding: 3px;
+}
+
+li.title-list {
+    text-align: center;
 }

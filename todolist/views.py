@@ -1,4 +1,5 @@
-from django.core.files.storage import FileSystemStorage
+import os
+from django.core.files.storage import FileSystemStorage, default_storage
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from todolist.models import Board, Task, Friend, Image, UserImages
@@ -216,7 +217,10 @@ def set_background(request):
     except Http404:
         user_images_qs = None
     if user_images_qs:
-        image_list = [entry for entry in user_images_qs.images.all()]
+        image_list = []
+        for entry in user_images_qs.images.all():
+            if default_storage.exists(entry.image.url.replace('/media/', '')):
+                image_list.append(entry)
 
     context = {
         'images': image_list,
