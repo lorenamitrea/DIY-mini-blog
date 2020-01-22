@@ -54,12 +54,11 @@
     {% block content %}{% endblock %}
 </div>
 {% block footer %}
-<footer class="page-footer font-small blue pt-4">
-    <div class="footer-copyright text-center py-3"><a
-            href="https://trello.com/invite/b/Beux8zyM/60d50dfe6f4f39ce9d9a7f5fdc6c61ef/django-project">
-        For suggestions please write a card on the "Suggestions" list</a>
-    </div>
-</footer>
+    <footer class="page-footer font-small blue pt-4">
+        <div class="footer-copyright text-center py-3">
+            <a href="{% url 'send_suggestions' %}"><button class="btn btn-dark my-2 my-sm-0">For suggestions please write a message</button></a>
+        </div>
+    </footer>
 {% endblock %}
 </body>
 </html>
