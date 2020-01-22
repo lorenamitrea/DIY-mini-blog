@@ -95,8 +95,7 @@ def todo(request):
     if len(background_obj) == 1:
         background = background_obj[0].background
     for board in boards:
-        if board.members.count() == 1:
-            todo_dict[board] = []
+        todo_dict[board] = []
     for task in tasks:
         if task.board in todo_dict.keys():
             task_dict = {'id': task.id, 'action': task.name, 'done': task.status, 'details': task.details}
