@@ -62,7 +62,7 @@ div.custom-form {
 img.custom-img {
     width: 20em;
     height: 20em;
-      object-fit: cover;
+    object-fit: cover;
 
 }
 
@@ -77,5 +77,24 @@ li.image-list {
 }
 
 li.title-list {
+    text-align: center;
+}
+
+div.show_shared {
+    visibility: hidden;
+    position: absolute;
+    background: #c6c8ca;
+    -webkit-transition: visibility 0s, opacity 0.5s linear;
+    transition: visibility 0s, opacity 0.5s linear;
+}
+
+li.title-list:hover div.show_shared {
+    visibility: visible;
+    display: block;
+    width: 60%;
+}
+
+ul.friends-list {
+    list-style-type: none;
     text-align: center;
 }
