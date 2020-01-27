@@ -78,6 +78,7 @@ li.image-list {
 
 li.title-list {
     text-align: center;
+    overflow: scroll;
 }
 
 div.show_shared {
