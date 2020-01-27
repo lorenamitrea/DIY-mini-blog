@@ -25,7 +25,8 @@
     {% block scripts %}
     {% endblock %}
 </head>
-<body style="background: url('{{ background.image.url }}') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
+<body style="background-image: url('{{ background.image.url }}'); background-repeat: no-repeat; background-position: center;
+         -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
 <div class="topbar">
     {% block topbar %}
         <ul class="nav justify-content-end">
