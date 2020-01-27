@@ -25,7 +25,6 @@
 .dropdown-menu.show {
     min-width: 100% !important;
     width: 100% !important;
-
 }
 
 ul.list-group {
@@ -33,22 +32,15 @@ ul.list-group {
     margin-right: 2px;
     margin-left: 7px;
     height: 100ch;
-
-
 }
 
 div.wrapper_board {
     display: inline-block;
-
-
 }
 
 div.custom_scrollable {
-
     overflow: auto;
     white-space: nowrap;
-
-
 }
 
 .form-inline {
@@ -63,7 +55,6 @@ img.custom-img {
     width: 20em;
     height: 20em;
     object-fit: cover;
-
 }
 
 ul.images-list {
