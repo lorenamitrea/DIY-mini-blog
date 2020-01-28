@@ -1,7 +1,10 @@
 from django import forms
+from django.shortcuts import get_object_or_404
+
 from .models import Friend, Image
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.core.mail import send_mail
 
 
 class NewBoard(forms.Form):
@@ -46,3 +49,23 @@ class NewImage(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control mr-sm-2'}),
         }
+
+
+class MessageForm(forms.Form):
+    message = forms.CharField(max_length=2000, label='Write here your suggestion',
+                              widget=forms.Textarea(attrs={'class': 'form-control mr-sm-2'}))
+
+    def __init__(self, *args, **kwargs):
+        current_user = kwargs.pop('current_user')
+        super().__init__(*args, **kwargs)
+        user_obj = get_object_or_404(User, pk=current_user)
+        self.current_user = user_obj.username
+
+    def save(self):
+        send_mail(
+            f'Suggestion from {self.current_user}',
+            self.cleaned_data['message'],
+            'todolistappdj@gmail.com',
+            ['todolistappdj@gmail.com'],
+            fail_silently=False,
+        )

@@ -13,6 +13,8 @@
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=1.0, user-scalable=no"/>
+
     <title>Dashboard</title>
 
     {% load static %}
@@ -23,7 +25,8 @@
     {% block scripts %}
     {% endblock %}
 </head>
-<body style="background: url('{{ background.image.url }}') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
+<body style="background-image: url('{{ background.image.url }}'); background-repeat: no-repeat; background-position: center;
+         -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
 <div class="topbar">
     {% block topbar %}
         <ul class="nav justify-content-end">
@@ -65,11 +68,12 @@
 <div class="content">
     {% block content %}{% endblock %}
 </div>
-<footer class="page-footer font-small blue pt-4">
-    <div class="footer-copyright text-center py-3"><a
-            href="https://trello.com/invite/b/Beux8zyM/60d50dfe6f4f39ce9d9a7f5fdc6c61ef/django-project">
-        For suggestions please write a card on the "Suggestions" list</a>
-    </div>
-</footer>
+{% block footer %}
+    <footer class="page-footer font-small blue pt-4">
+        <div class="footer-copyright text-center py-3">
+            <a href="{% url 'send_suggestions' %}"><button class="btn btn-dark my-2 my-sm-0">For suggestions please write a message</button></a>
+        </div>
+    </footer>
+{% endblock %}
 </body>
 </html>
