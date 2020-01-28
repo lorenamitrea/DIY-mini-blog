@@ -1,13 +1,12 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    {% load friendship_tags %}
+    {% load custom_tags %}
     <h1>Search results</h1>
     {% if object_list %}
         <ul class="list-group list-group-flush">
             {% for object_instance in object_list %}
                 <li class="list-group-item">
-
                     <form class="form-inline" method="post" action="{% url 'change_friendship' pk=object_instance.id %}">
                         {% csrf_token %}
                         <a href="{% url 'profile' username=object_instance.username %}"> {{ object_instance.username }}&nbsp;</a>

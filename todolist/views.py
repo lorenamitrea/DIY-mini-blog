@@ -1,4 +1,4 @@
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import default_storage
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from todolist.models import Board, Task, Friend, Image, UserImages
@@ -84,22 +84,29 @@ def signup(request):
 def todo(request):
     todo_dict = {}
     index_position = 0
-    username = request.user.id
-    boards = Board.objects.filter(user_id=username)
+    user_id = request.user.id
+    username = request.user.username
+    boards = Board.objects.filter(user_id=user_id)
     tasks = Task.objects.filter(board_id__in=boards)
-    friends_form = BoardShare(current_user=username)
+    friends_form = BoardShare(current_user=user_id)
     board_form = NewBoard(prefix='board')
     task_form = NewTask(prefix='task')
     background = None
-    background_obj = UserImages.objects.filter(user=username)
+    background_obj = UserImages.objects.filter(user=user_id)
+    shared_with = {}
     if len(background_obj) == 1:
         background = background_obj[0].background
     for board in boards:
-        if board.members.count() == 1:
-            todo_dict[board] = []
+        todo_dict[board] = []
+        shared_with[board] = [member.username for member in board.members.all() if member.username != username]
     for task in tasks:
         if task.board in todo_dict.keys():
-            task_dict = {'id': task.id, 'action': task.name, 'done': task.status, 'details': task.details}
+            task_dict = {
+                'id': task.id,
+                'action': task.name,
+                'done': task.status,
+                'details': task.details,
+            }
             if task_dict['done']:
                 todo_dict[task.board].append(task_dict)
             else:
@@ -110,7 +117,8 @@ def todo(request):
         'board_form': board_form,
         'task_form': task_form,
         'friends_form': friends_form,
-        'background': background
+        'background': background,
+        'shared_boards': shared_with
     }
     return render(request, 'todo.html', context=context)
 
@@ -216,7 +224,10 @@ def set_background(request):
     except Http404:
         user_images_qs = None
     if user_images_qs:
-        image_list = [entry for entry in user_images_qs.images.all()]
+        image_list = []
+        for entry in user_images_qs.images.all():
+            if default_storage.exists(entry.image.url.replace('/media/', '')):
+                image_list.append(entry)
 
     context = {
         'images': image_list,

@@ -3,15 +3,17 @@
 
     <div>
         <div class="card-group">
-            {% for image in images %}
-                <ul class="images-list">
-                    <li>
-                        <a href="{% url 'select_background' image.id %}">
-                            <img class="custom-img" src="{{ image.image.url }}" alt="{{ image.image.title }}">
-                        </a>
-                    </li>
-                </ul>
-            {% endfor %}
+            <ul class="images-list">
+                {% for image in images %}
+                    {% if image.image.url %}
+                        <li class="image-list">
+                            <a href="{% url 'select_background' image.id %}">
+                                <img class="custom-img" src="{{ image.image.url }}" alt="{{ image.image.title }}">
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
         </div>
         <form class="form-inline custom-form" action="{% url 'set_background' %}" method="post"
               enctype="multipart/form-data">

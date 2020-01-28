@@ -26,7 +26,22 @@
             <div class="wrapper_board">
                 <ul class="list-group">
                     <li class="list-group-item list-group-item-dark title-list">
-
+                        {% load custom_tags %}
+                        <div class="show_shared">
+                            <ul class="friends-list">
+                                {% get_item shared_boards key as friends %}
+                                {% if friends %}
+                                    <li>
+                                        Shared with:
+                                    </li>
+                                    {% for friend in friends %}
+                                        <li>
+                                            {{ friend }}
+                                        </li>
+                                    {% endfor %}
+                                {% endif %}
+                            </ul>
+                        </div>
                         <form action="{% url 'delete_board' pk=key.id %}" method="post">
                             {% csrf_token %}
                             {{ key.name }}
