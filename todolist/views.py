@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from todolist.models import Board, Task, Friend, Image, UserImages
 from django.contrib.auth.decorators import login_required
-from .forms import NewBoard, NewTask, BoardShare, UserCreationFormExtended, NewImage
+from .forms import NewBoard, NewTask, BoardShare, UserCreationFormExtended, NewImage, MessageForm
 from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.urls import reverse
 from django.contrib.auth import login, authenticate
@@ -244,3 +244,19 @@ def select_background(request, pk):
     user_images.background = image
     user_images.save()
     return redirect('todo')
+
+
+@login_required
+def send_suggestions(request):
+    user_id = request.user.id
+    if request.method == 'POST':
+        message_form = MessageForm(request.POST, current_user=user_id)
+        if message_form.is_valid():
+            print(message_form)
+            message_form.save()
+    else:
+        message_form = MessageForm(current_user=user_id)
+    context = {
+        'form': message_form
+    }
+    return render(request, 'suggestions.html', context=context)
