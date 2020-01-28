@@ -252,8 +252,8 @@ def send_suggestions(request):
     if request.method == 'POST':
         message_form = MessageForm(request.POST, current_user=user_id)
         if message_form.is_valid():
-            print(message_form)
             message_form.save()
+            return redirect('todo')
     else:
         message_form = MessageForm(current_user=user_id)
     context = {
