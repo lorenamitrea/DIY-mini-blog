@@ -1,0 +1,22 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  web:
+    build:
+      dockerfile: Dockerfile.app
+      context: .
+    environment:
+      - DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
+      - DJANGO_EMAIL_HOST_PASSWORD=$DJANGO_EMAIL_HOST_PASSWORD
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/webapp
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
